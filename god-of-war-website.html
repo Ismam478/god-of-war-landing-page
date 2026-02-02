@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God of War - Ragnarök Awaits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c9aa71;
+            --secondary-color: #8b7355;
+            --accent-color: #d4af37;
+            --text-color: #ffffff;
+            --dark-bg: #1a1410;
+            --card-bg: #2a2420;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0604, #1a1410);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOut 0.5s ease 2.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .omega-symbol {
+            font-size: 5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            animation: pulse 1.5s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            letter-spacing: 3px;
+            margin-bottom: 2rem;
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            width: 0;
+            animation: loadProgress 2s ease forwards;
+        }
+
+        @keyframes loadProgress {
+            to { width: 100%; }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 20, 16, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            z-index: 1000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .navbar.visible {
+            transform: translateY(0);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(26, 20, 16, 0.3), rgba(42, 36, 32, 0.4)),
+                        url('https://i.pinimg.com/736x/9a/3f/6d/9a3f6d91e46c148fdffa98f543f79a84.jpg') center right/cover no-repeat;
+            background-attachment: fixed;
+            background-position: 65% center;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                background-attachment: scroll;
+                background-position: 60% center;
+            }
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(26, 20, 16, 0.2) 100%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            color: var(--primary-color);
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-bottom: 2rem;
+            color: var(--text-color);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* Color Swatches */
+        .color-swatches {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .swatch-btn {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swatch-btn:hover {
+            transform: scale(1.15);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        .swatch-btn.active {
+            border-color: #fff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        .swatch-gold {
+            background: linear-gradient(135deg, #c9aa71, #d4af37);
+        }
+
+        .swatch-frost {
+            background: linear-gradient(135deg, #4a90e2, #7cb3e9);
+        }
+
+        .swatch-blood {
+            background: linear-gradient(135deg, #c23b22, #e74c3c);
+        }
+
+        /* Cards Section */
+        .cards-section {
+            padding: 8rem 2rem 6rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.95));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 2rem;
+            pointer-events: none;
+            overflow-y: auto;
+        }
+
+        .card:hover .card-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .card-overlay::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .card-overlay::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .card-overlay::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        .card-overlay::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        .card:hover .card-content {
+            opacity: 0;
+        }
+
+        .overlay-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .overlay-text {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.7;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-content {
+            padding: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 6rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 800;
+        }
+
+        .contact-form {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(201, 170, 113, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-loading {
+            display: none;
+        }
+
+        .email-hint {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .form-input:invalid:not(:placeholder-shown) {
+            border-color: #e74c3c;
+        }
+
+        .form-input:valid:not(:placeholder-shown) {
+            border-color: #2ecc71;
+        }
+
+        .form-success-message {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+            margin-top: 2rem;
+            animation: slideIn 0.5s ease;
+        }
+
+        .form-success-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--dark-bg);
+            margin: 0 auto 1.5rem;
+            animation: scaleIn 0.5s ease 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .form-success-message h3 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .form-success-message p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Character Gallery Section */
+        .character-section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, var(--dark-bg) 0%, rgba(26, 20, 16, 0.5) 100%);
+        }
+
+        .character-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .character-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        .character-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .character-card.expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            z-index: 10000;
+            overflow-y: auto;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9);
+            border-color: var(--accent-color);
+        }
+
+        .character-card.expanded:hover {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .character-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .character-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .character-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .character-info {
+            padding: 1.5rem;
+        }
+
+        .character-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .character-role {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .character-bio {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .character-detailed-bio {
+            display: none;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 1rem;
+            border-top: 2px solid var(--primary-color);
+        }
+
+        .character-card.expanded .character-detailed-bio {
+            display: block;
+        }
+
+        .character-card.expanded .character-img {
+            height: 350px;
+        }
+
+        .bio-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .bio-section h4 {
+            font-size: 1.3rem;
+            color: var(--accent-color);
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bio-section p {
+            margin-bottom: 0.8rem;
+            line-height: 1.8;
+        }
+
+        .close-bio-btn {
+            position: sticky;
+            top: 10px;
+            right: 10px;
+            float: right;
+            background: var(--primary-color);
+            color: var(--dark-bg);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .character-card.expanded .close-bio-btn {
+            display: flex;
+        }
+
+        .close-bio-btn:hover {
+            background: var(--accent-color);
+            transform: rotate(90deg);
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            padding: 6rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timeline {
+            position: relative;
+            margin-top: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: flex-start;
+            padding-left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-end;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border: 4px solid var(--dark-bg);
+            border-radius: 50%;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover .timeline-marker {
+            transform: translateX(-50%) scale(1.5);
+            background: var(--accent-color);
+        }
+
+        .timeline-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 45%;
+            border: 2px solid transparent;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            text-align: right;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .timeline-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timeline-date {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .timeline-description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero {
+                clip-path: polygon(0 0, 100% 0, 100% 90%, 50% 100%, 0 90%);
+                min-height: 500px;
+                background-attachment: scroll;
+                background-position: 60% center;
+            }
+
+            .hero h1 {
+                letter-spacing: 2px;
+            }
+
+            .hero-subtitle {
+                letter-spacing: 1px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: rgba(26, 20, 16, 0.98);
+                width: 100%;
+                text-align: center;
+                transition: left 0.3s ease;
+                gap: 0;
+                padding: 2rem 0;
+                border-top: 2px solid var(--primary-color);
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-menu li {
+                padding: 1rem 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-link {
+                font-size: 1rem;
+                display: block;
+                padding: 0.5rem 0;
+            }
+
+            .nav-logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .cards-section {
+                padding: 5rem 1rem 4rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .card {
+                max-width: 100%;
+            }
+
+            .card-image {
+                height: 200px;
+                object-fit: cover;
+            }
+
+            .card:hover {
+                transform: scale(1.01);
+            }
+
+            .overlay-text {
+                font-size: 0.95rem;
+            }
+
+            .character-section {
+                padding: 4rem 1rem;
+            }
+
+            .character-gallery {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .character-card {
+                max-width: 100%;
+            }
+
+            .character-img {
+                height: 250px;
+                width: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+
+            .character-card:hover {
+                transform: scale(1.01);
+            }
+
+            .timeline-section {
+                padding: 4rem 1rem;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-marker {
+                left: 20px;
+            }
+
+            .timeline-content {
+                width: calc(100% - 60px);
+                margin-left: 60px;
+            }
+
+            .timeline-item:nth-child(even) .timeline-content {
+                text-align: left;
+            }
+
+            .contact-section {
+                padding: 4rem 1rem;
+            }
+
+            .contact-form {
+                padding: 2rem 1.5rem;
+            }
+
+            .swatch-btn {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 1rem;
+                min-height: 450px;
+                background-position: 55% center;
+            }
+
+            .section-title {
+                letter-spacing: 2px;
+                font-size: 2rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-menu {
+                top: 60px;
+            }
+
+            .nav-logo {
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+
+            .cards-container {
+                gap: 1rem;
+            }
+
+            .card-image {
+                height: 180px;
+            }
+
+            .character-gallery {
+                gap: 1rem;
+            }
+
+            .character-img {
+                height: 220px;
+            }
+
+            .character-section {
+                padding: 3rem 1rem;
+            }
+
+            .contact-form {
+                padding: 1.5rem;
+            }
+
+            .overlay-title {
+                font-size: 1.5rem;
+            }
+
+            .overlay-text {
+                font-size: 0.9rem;
+            }
+
+            .card-overlay {
+                padding: 1.5rem;
+            }
+
+            .timeline-content {
+                padding: 1.5rem;
+            }
+
+            .timeline-section {
+                padding: 3rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="loading-content">
+            <div class="omega-symbol">Ω</div>
+            <div class="loading-text">Loading...</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">GOD OF WAR</div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link" onclick="closeMenu()">Home</a></li>
+                <li><a href="#story" class="nav-link" onclick="closeMenu()">Story</a></li>
+                <li><a href="#characters" class="nav-link" onclick="closeMenu()">Characters</a></li>
+                <li><a href="#timeline" class="nav-link" onclick="closeMenu()">Timeline</a></li>
+                <li><a href="#contact" class="nav-link" onclick="closeMenu()">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Particle Container -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>God of War</h1>
+            <p class="hero-subtitle">Ragnarök Awaits - Embrace Your Destiny</p>
+            
+            <div class="color-swatches">
+                <button class="swatch-btn swatch-gold active" onclick="changeTheme('gold')" aria-label="Gold theme"></button>
+                <button class="swatch-btn swatch-frost" onclick="changeTheme('frost')" aria-label="Frost theme"></button>
+                <button class="swatch-btn swatch-blood" onclick="changeTheme('blood')" aria-label="Blood theme"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cards Section -->
+    <section class="cards-section" id="story">
+        <div class="cards-container">
+            <div class="card">
+                <img src="https://i.pinimg.com/736x/5f/19/f6/5f19f602b8839dfb69a9241706505061.jpg" alt="Epic Battle" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Epic Battles</h3>
+                    <p class="card-description">Face mythological beasts and gods in visceral combat. Master the Leviathan Axe and Blades of Chaos to overcome impossible odds.</p>
+                </div>
+                <div class="card-overlay">
+                    <h3 class="overlay-title">The Ghost of Sparta</h3>
+                    <div class="overlay-text">
+                        <p>Once a brutal Spartan captain, Kratos pledged his soul to Ares, the God of War, in exchange for victory over the barbarian hordes. Ares granted him the cursed Blades of Chaos, searing the chains permanently to his forearms. Under Ares' influence, Kratos became an unstoppable force, raiding villages and spreading destruction across Greece.</p>
+                        <p>In his most devastating campaign, Ares deceived Kratos by transporting his wife Lysandra and daughter Calliope to a temple he was ordered to destroy. Blinded by bloodlust, Kratos unknowingly slaughtered his own family. A village oracle cursed him by bonding their ashes to his skin, turning him ghostly pale - forever marking him as the Ghost of Sparta.</p>
+                        <p>Consumed by guilt and rage, Kratos broke his blood oath to Ares and spent years seeking redemption. He eventually acquired Pandora's Box and used its power to kill Ares in an epic battle, becoming the new God of War. But his quest for vengeance was far from over, as Zeus' betrayal would set him on a path to destroy the entire Greek pantheon.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://i.pinimg.com/736x/8f/6a/ed/8f6aededc9ac0e6f214f3dc2281830aa.jpg" alt="Norse Mythology" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Norse Realms</h3>
+                    <p class="card-description">Explore the breathtaking Nine Realms of Norse mythology. Discover ancient secrets and forge your path through stunning landscapes.</p>
+                </div>
+                <div class="card-overlay">
+                    <h3 class="overlay-title">Journey to Ragnarök</h3>
+                    <div class="overlay-text">
+                        <p>After destroying the Greek pantheon, Kratos fled to the Norse realm of Midgard, seeking peace and a new beginning. There he met Faye, a fierce giantess known to her people as Laufey the Just. Together they built a life hidden from the gods, raising their son Atreus in the wilderness.</p>
+                        <p>When Faye passed, she left behind a final wish - to have her ashes spread from the highest peak in all the realms. This journey would reveal that Atreus is actually Loki, destined to play a pivotal role in Ragnarök, the prophesied end of the Norse gods. The giants foresaw everything, including Kratos' arrival in their realm.</p>
+                        <p>As Fimbulwinter descended and Ragnarök loomed, Kratos and Atreus found themselves at the center of an apocalyptic conflict between the Aesir gods led by Odin and Thor, and the surviving giants. They united allies across the Nine Realms - from Freya to the dwarven brothers Brok and Sindri - to wage war against Asgard. The final battle would determine the fate of all realms, with Kratos ultimately defeating both Thor and Odin, allowing a new era to begin.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://i.pinimg.com/736x/9c/9d/c1/9c9dc15129bcee985ea4d6479b4d0462.jpg" alt="Father and Son" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Legacy & Bond</h3>
+                    <p class="card-description">Experience a powerful father-son journey as Kratos and Atreus navigate their destiny together through trials and tribulations.</p>
+                </div>
+                <div class="card-overlay">
+                    <h3 class="overlay-title">Breaking the Cycle</h3>
+                    <div class="overlay-text">
+                        <p>Kratos learned the hard way that revenge destroys everything it touches. His blind pursuit of vengeance against Ares for killing his family led him to murder his own father Zeus and annihilate the entire Greek pantheon. In doing so, he brought catastrophic destruction to Greece - causing floods, plagues, and the collapse of civilization itself. He sacrificed his freedom, his humanity, and countless innocent lives, only to find that revenge brought no peace.</p>
+                        <p>Now a father again, Kratos struggles with a painful truth: he became the very thing he hated. Just as the gods used him as a pawn, he allowed rage to control him completely. He fears Atreus will inherit this curse of violence and repeat his mistakes. Throughout their journey, Kratos must learn to be vulnerable and honest with his son, sharing the brutal truth of his past.</p>
+                        <p>The bond between father and son becomes both their greatest strength and deepest challenge. Atreus must reconcile being Loki, the Norse god of mischief, with the lessons his father teaches about controlling rage and choosing a better path. Kratos finally understands that true strength isn't in vengeance or godly power - it's in breaking the cycle of violence and being the father Atreus needs, not the monster he once was.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Character Gallery Section -->
+    <section class="character-section" id="characters">
+        <h2 class="section-title">Legendary Warriors</h2>
+        
+        <!-- Character Overlay -->
+        <div class="character-overlay" id="characterOverlay" onclick="closeCharacterBio()"></div>
+        
+        <div class="character-gallery">
+            <!-- Kratos -->
+            <div class="character-card" onclick="toggleCharacterBio(this, event)">
+                <button class="close-bio-btn" onclick="closeCharacterBio(event)">×</button>
+                <img src="https://i.pinimg.com/1200x/3b/9f/f0/3b9ff0b987c9d141275515d4a019f091.jpg" alt="Kratos" class="character-img">
+                <div class="character-info">
+                    <h3 class="character-name">Kratos</h3>
+                    <p class="character-role">The Ghost of Sparta</p>
+                    <p class="character-bio">Former Greek God of War seeking redemption in the Norse realms. A father bound by his past.</p>
+                    
+                    <div class="character-detailed-bio">
+                        <div class="bio-section">
+                            <h4>Origins & The Spartan Warrior</h4>
+                            <p>Born in Sparta to Zeus and the mortal woman Callisto, Kratos is a demigod whose very existence was marked by tragedy from the start. Hera, enraged by Zeus fathering another illegitimate child, ordered his execution at birth. Kratos survived and grew into a fierce Spartan captain, leading his armies through countless conquests across Greece alongside his brother Deimos, who was taken by Ares and Athena in their youth.</p>
+                            <p>Standing at 7 feet 8 inches in his Greek era, Kratos became an unstoppable force on the battlefield. When facing annihilation by barbarian hordes, he made a fateful deal with Ares, the God of War, pledging his soul for victory. Ares granted him the cursed Blades of Chaos - twin daggers chained permanently to his forearms through searing flesh.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>The Ghost of Sparta</h4>
+                            <p>Under Ares' influence, Kratos became a brutal instrument of destruction, raiding villages and spreading carnage across Greece. In his most devastating campaign, Ares deceived him by transporting his wife Lysandra and daughter Calliope into a temple Kratos was ordered to destroy. Blinded by bloodlust, he unknowingly slaughtered his own family.</p>
+                            <p>A village oracle cursed him by magically bonding their ashes to his skin, turning him ghostly pale and earning him the name "Ghost of Sparta." Consumed by guilt and rage, Kratos broke his blood oath to Ares and spent years seeking redemption through servitude to the Olympian gods.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Fall of Olympus</h4>
+                            <p>Kratos eventually acquired Pandora's Box, using its power to kill Ares and become the new God of War. However, Zeus - revealed to be his father - betrayed and killed him, stripping away his godhood. Resurrected by the Titans, Kratos embarked on a path of vengeance that would bring catastrophic destruction to Greece.</p>
+                            <p>His quest culminated in God of War III, where he systematically murdered the entire Greek pantheon, including Zeus. Each god's death brought plagues, floods, and darkness upon Greece, reducing civilization to chaos. The Ghost of Sparta's revenge was complete, but at the cost of destroying the entire Greek world.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Journey to Midgard</h4>
+                            <p>Leaving his bloody past behind, Kratos fled Greece and eventually reached Ancient Egypt before settling in Midgard of the Norse realms. There he met Faye (Laufey), a fierce giantess hiding among mortals. Together they built a life in the wilderness, raising their son Atreus far from the gods' eyes.</p>
+                            <p>Now standing at 6 feet 4 inches, the aged Kratos sought to mature beyond his self-destructive tendencies. When Faye died, her final wish was to have her ashes spread from the highest peak in all Nine Realms. This journey would reveal that Atreus is actually Loki, destined to trigger Ragnarök, bringing Kratos into direct conflict with Odin and the Aesir gods.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>The Path of Redemption</h4>
+                            <p>As Ragnarök unfolds, Kratos faces his greatest challenge - not as a god-killer, but as a father. He must teach Atreus to control his rage and avoid repeating the cycle of violence that consumed him. Ultimately defeating both Thor and Odin, Kratos proves that change is possible, even for those who've committed unspeakable atrocities.</p>
+                            <p>In Valhalla, Kratos confronts his past and makes amends with himself, accepting the position of Norse God of War - not as a weapon of destruction, but as a champion of hope, breaking the cycle that defined his entire existence.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Atreus -->
+            <div class="character-card" onclick="toggleCharacterBio(this, event)">
+                <button class="close-bio-btn" onclick="closeCharacterBio(event)">×</button>
+                <img src="https://i.pinimg.com/736x/12/aa/6b/12aa6bc93672cf20f42071da049bab49.jpg" alt="Atreus" class="character-img">
+                <div class="character-info">
+                    <h3 class="character-name">Atreus</h3>
+                    <p class="character-role">Loki - God of Mischief</p>
+                    <p class="character-bio">Son of Kratos and Faye. Half-god, half-giant, destined to shape Ragnarök's outcome.</p>
+                    
+                    <div class="character-detailed-bio">
+                        <div class="bio-section">
+                            <h4>A Child of Two Worlds</h4>
+                            <p>Born to the Greek demigod Kratos and the Jötunn giantess Faye (Laufey the Just), Atreus represents a unique convergence of mythologies. His name was chosen by Kratos to honor a compassionate Spartan soldier who showed humanity amidst war. However, his mother's people knew him by another name: Loki.</p>
+                            <p>Sickly throughout much of his childhood, Atreus' illness stemmed from his confusion about his own nature - he was divine but didn't know it. Once he learned the truth about being a god, his health improved dramatically, but it also awakened a dangerous arrogance and impulsiveness that echoed his father's worst tendencies.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Powers & Abilities</h4>
+                            <p>As a half-god, half-giant, Atreus possesses extraordinary abilities. He inherited superhuman strength, durability, and his father's self-healing capabilities. His archery skills are exceptional, enhanced by runic magic tattooed on his body. Most remarkably, he has the rare gift of linguistic mastery - able to decipher ancient languages including primordial scripts that even Odin cannot read.</p>
+                            <p>Atreus can communicate naturally with animals and non-human beings, conversing with wolves, Jörmungandr the World Serpent, and even magical artifacts. As he matures, he develops shapeshifting abilities traditional to Loki, along with precognitive visions inherited from his giant heritage.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>The Loki Revelation</h4>
+                            <p>The discovery of his true identity as Loki creates profound implications. In Norse prophecy, Loki is destined to play a central role in Ragnarök - the catastrophic end of the gods. This revelation creates tension between father and son, as Kratos fears Atreus will embrace the chaotic, destructive nature mythology attributes to Loki.</p>
+                            <p>During their journey, Atreus inadvertently causes Baldur's death by providing the mistletoe arrow that breaks Freya's invulnerability spell, mirroring Loki's role in Norse myth. This act triggers Fimbulwinter and accelerates the onset of Ragnarök.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Journey of Self-Discovery</h4>
+                            <p>In Ragnarök, Atreus struggles with his dual identity. Odin manipulates him, exploiting his desire for answers and his adolescent need to prove himself. Atreus travels to Asgard, befriends Thor's daughter Thrud, and uncovers Odin's deceptions - including the All-Father's disguise as Týr.</p>
+                            <p>He discovers his connection to Angrboda, and through her learns about the giants' true fate and his role in their prophecies. Unlike the mythological Loki who fathers monsters, Atreus chooses his own path, refusing to let prophecy dictate his actions.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>The God of Stories</h4>
+                            <p>Atreus embodies empathy and compassion - his defining traits that set him apart from traditional depictions of Loki. He cannot stand to see suffering and feels others' pain deeply. His love for stories and natural storytelling ability connects to Loki's role as the God of Stories in Norse mythology.</p>
+                            <p>By Ragnarök's end, Atreus accepts both his names - Atreus honors his humanity and connection to his father, while Loki represents his divine heritage and role in shaping the realms' future. He chooses to use his chaos not for destruction, but for creating new possibilities and freedom of choice.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thor -->
+            <div class="character-card" onclick="toggleCharacterBio(this, event)">
+                <button class="close-bio-btn" onclick="closeCharacterBio(event)">×</button>
+                <img src="https://i.pinimg.com/736x/7c/58/7d/7c587d16f55aefb238138444c30a74ae.jpg" alt="Thor" class="character-img">
+                <div class="character-info">
+                    <h3 class="character-name">Thor</h3>
+                    <p class="character-role">God of Thunder</p>
+                    <p class="character-bio">Odin's brutal enforcer wielding Mjölnir. A complicated warrior struggling with his legacy.</p>
+                    
+                    <div class="character-detailed-bio">
+                        <div class="bio-section">
+                            <h4>Odin's Weapon</h4>
+                            <p>Thor, son of Odin and the giantess Fjörgyn, stands as the God of Thunder, Lightning, Storms, Wrestling, and Strength. From birth, Odin molded him not as a son, but as a tool - the "Biggest Butchering Bastard in the Nine Realms." Thor became Odin's primary enforcer, sent when intimidation and overwhelming force were required.</p>
+                            <p>Over a thirty to sixty-year rampage, Thor committed genocide against the Jötnar (giants) across Midgard, wielding the legendary hammer Mjölnir - forged by the dwarven brothers Brok and Sindri. These atrocities earned him eternal enmity from the surviving giants and even Jörmungandr, the World Serpent, who harbors bitter hatred for the Thunder God.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>The Weight of Legacy</h4>
+                            <p>Despite his godly power - capable of fighting beings that battled the Titans and created universes - Thor struggles under the crushing weight of living up to Odin's impossible expectations. Unlike the jovial Marvel depiction, God of War's Thor is tragic, broken, and deeply human despite his divine nature.</p>
+                            <p>Thor's family life reveals his complexity. He fathered Magni and Modi from different relationships, both killed by Kratos and Atreus in God of War (2018). When Modi returned in fear after Magni's death, Thor brutally beat his own son nearly to death, blaming him for his brother's fall. This moment became a turning point in Thor's life.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Struggles with Addiction</h4>
+                            <p>To cope with his father's abuse and the weight of his atrocities, Thor turned to heavy drinking - a stark contrast to his MCU counterpart's brief comedic struggle with weight. His alcoholism destroys his relationships and disappoints his wife Sif and daughter Thrud.</p>
+                            <p>In Ragnarök, Atreus and Thrud discover Thor has relapsed after a period of sobriety. After a tense bar fight, Thrud scolds her father, expressing her and Sif's disappointment. Thor, lacking confidence in himself, believes he cannot change because of the heinous crimes he's committed - a belief Kratos later challenges.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Mirror to Kratos</h4>
+                            <p>Thor serves as both a dark reflection and parallel to Kratos. Both are fathers who've killed countless innocents, both struggle with rage, and both have lost children due to their own actions. The key difference: Kratos chose to change for Atreus, while Thor waited too long to stand against Odin.</p>
+                            <p>When Thor confronts Kratos at the game's start, he's surprisingly calm and civil, offering to have a drink before fighting - revealing layers beyond the monster described in legends. During their journey, Atreus befriends Thor's daughter Thrud, seeing the good man Thor could have been without Odin's corruption.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Tragic Redemption</h4>
+                            <p>In Ragnarök's climax, Thor finally breaks free from Odin's control. Kratos refuses to kill him, stating that for their children's sake, they must be better. This moment of mercy reaches Thor - he drops Mjölnir and defies his father for the first time.</p>
+                            <p>But his redemption comes too late. Odin murders Thor for his disobedience, killing his own son without hesitation. Thor's death serves as a cautionary tale of waiting too long to change. However, his daughter Thrud survives, wielding Mjölnir and training to become a Valkyrie - carrying forward the best parts of her father's legacy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Odin -->
+            <div class="character-card" onclick="toggleCharacterBio(this, event)">
+                <button class="close-bio-btn" onclick="closeCharacterBio(event)">×</button>
+                <img src="https://i.pinimg.com/1200x/72/cf/04/72cf046b1cf4612de2aa4c16095f58f5.jpg" alt="Odin" class="character-img">
+                <div class="character-info">
+                    <h3 class="character-name">Odin</h3>
+                    <p class="character-role">The All-Father</p>
+                    <p class="character-bio">King of Asgard obsessed with knowledge and preventing his prophesied doom at Ragnarök.</p>
+                    
+                    <div class="character-detailed-bio">
+                        <div class="bio-section">
+                            <h4>The All-Father's Obsession</h4>
+                            <p>Odin, ruler of the Aesir tribe and King of Asgard, stands as one of mythology's most complex figures. Unlike the muscular Zeus-like depiction expected of a god-king, Odin appears deceptively unassuming - an older man standing only 5'9", with grey hair, a receding hairline, and an eyepatch covering his right eye, surrounded by dark tattoos.</p>
+                            <p>His obsession with knowledge and control defines everything. After killing his grandfather Ymir to create the Nine Realms, Ymir's death caused a tear in reality - a mysterious green rift that Odin became fixated upon. He believes this rift holds answers about what happens to gods after death and how to control fate itself, particularly his prophesied demise at Ragnarök.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Master Manipulator</h4>
+                            <p>Unlike Zeus who ruled through brute force, Odin's power lies in deception, gaslighting, and emotional manipulation. He employs propaganda, economic control, and misplaced loyalty to maintain his iron grip on the Nine Realms. His strategic cunning makes him far more dangerous than any Greek god Kratos faced.</p>
+                            <p>Odin's manipulation extends to his own family. He married Freya to make peace between the Aesir and Vanir, only to abuse her when she refused to grant him the same invulnerability spell she gave Baldur. He shaped Thor into a weapon, imprisoned Týr and impersonated him, and used every one of his children as tools rather than treating them as family.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>The Mask and the Rift</h4>
+                            <p>Odin's ultimate goal revolves around a mysterious mask connected to the reality rift. He needs someone with extraordinary linguistic abilities to decipher its ancient runes - someone like Atreus. Odin infiltrates Kratos' group by disguising himself as Týr, living among them for an extended period before being exposed by Brok, whom he murders in cold blood.</p>
+                            <p>His treatment of Mimir reveals his true nature. Once Odin's advisor, Mimir advocated for peace and was gifted Bifrost crystals by the giants. When Mimir turned against him, Odin imprisoned him atop Midgard's highest peak for over a century - keeping the "Smartest Man Alive" as a trophy to remind everyone that Odin is the real genius.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>A Paranoid Control Freak</h4>
+                            <p>Ironically, despite his lust for knowledge, Odin proves incapable of introspection. He never examines his own faults or mistakes - a result of narcissism and an inflated sense of superiority. When he explored Valhalla seeking to control the Valkyries, he found nothing useful, as Valhalla only rewards those who look within themselves. As Týr stated, "Odin always looked outside himself for answers."</p>
+                            <p>His paranoia manifests in genocide and control. He ordered the slaughter of all giants, manipulated prophecy collectors, and eliminated anyone who threatened his power - including potentially his own three brothers who helped him kill Ymir. His two ravens, Huginn and Muninn, serve as extensions of his surveillance and communication.</p>
+                        </div>
+                        
+                        <div class="bio-section">
+                            <h4>Fall of the All-Father</h4>
+                            <p>In Ragnarök's climax, Odin's true nature is fully revealed. When Thor defies him by refusing to kill Kratos, Odin murders his own son without hesitation - proving Thor was never family, just a tool whose usefulness had ended. Despite his cunning, Odin proves capable of besting Kratos and Atreus in direct combat, requiring their combined efforts with Freya to defeat him.</p>
+                            <p>When beaten, Odin tries one final manipulation of Atreus, pleading for mercy. But Atreus traps Odin's soul in a Jötunn marble. Sindri, consumed by grief over Brok's death, seizes the marble and destroys it completely - obliterating Odin's consciousness, soul, and very being from existence. The All-Father who sought immortality through knowledge met total annihilation, leaving no afterlife, no legacy - just nothing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section" id="timeline">
+        <h2 class="section-title">The Saga Timeline</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">The Spartan Warrior</h3>
+                    <span class="timeline-date">Ancient Greece</span>
+                    <p class="timeline-description">Kratos pledges his soul to Ares, unknowingly setting a tragic destiny in motion.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">The Ghost of Sparta</h3>
+                    <span class="timeline-date">Greek Era</span>
+                    <p class="timeline-description">Cursed with his family's ashes, Kratos begins his quest for vengeance against Ares.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">Fall of Olympus</h3>
+                    <span class="timeline-date">Greek Mythology</span>
+                    <p class="timeline-description">Kratos destroys the Greek pantheon, bringing catastrophe to the ancient world.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">Journey to Midgard</h3>
+                    <span class="timeline-date">Norse Realm</span>
+                    <p class="timeline-description">Kratos finds peace with Faye and raises Atreus, hiding from his violent past.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">The Prophecy Revealed</h3>
+                    <span class="timeline-date">God of War (2018)</span>
+                    <p class="timeline-description">Father and son discover Atreus is Loki, destined to trigger Ragnarök.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <h3 class="timeline-title">Ragnarök</h3>
+                    <span class="timeline-date">God of War Ragnarök</span>
+                    <p class="timeline-description">The final battle against Odin and the Aesir gods determines the fate of all Nine Realms.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <h2 class="section-title">Contact Us</h2>
+        <form class="contact-form" onsubmit="handleSubmit(event)" id="contactForm">
+            <div class="form-group">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" id="name" name="name" class="form-input" required placeholder="Enter your name" minlength="2">
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-input" required placeholder="Enter your email" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}">
+                <span class="email-hint">Must contain @ symbol (e.g., example@email.com)</span>
+            </div>
+
+            <div class="form-group">
+                <label for="message" class="form-label">Message</label>
+                <textarea id="message" name="message" class="form-textarea" required placeholder="Write your message here..." minlength="10"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="btn-text">Send Message</span>
+                <span class="btn-loading" style="display: none;">Sending...</span>
+            </button>
+        </form>
+        
+        <!-- Success Message -->
+        <div class="form-success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+            <h3>Message Sent Successfully!</h3>
+            <p>Thank you for reaching out. We'll get back to you soon.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 God of War. All rights reserved. Experience the legend.</p>
+    </footer>
+
+    <script>
+        // Theme Changer
+        function changeTheme(theme) {
+            const root = document.documentElement;
+            const swatches = document.querySelectorAll('.swatch-btn');
+            
+            // Remove active class from all swatches
+            swatches.forEach(swatch => swatch.classList.remove('active'));
+            
+            if (theme === 'gold') {
+                root.style.setProperty('--primary-color', '#c9aa71');
+                root.style.setProperty('--secondary-color', '#8b7355');
+                root.style.setProperty('--accent-color', '#d4af37');
+                root.style.setProperty('--dark-bg', '#1a1410');
+                root.style.setProperty('--card-bg', '#2a2420');
+                document.querySelector('.swatch-gold').classList.add('active');
+                updateParticles('gold');
+            } else if (theme === 'frost') {
+                root.style.setProperty('--primary-color', '#4a90e2');
+                root.style.setProperty('--secondary-color', '#357abd');
+                root.style.setProperty('--accent-color', '#7cb3e9');
+                root.style.setProperty('--dark-bg', '#0a1628');
+                root.style.setProperty('--card-bg', '#1a2840');
+                document.querySelector('.swatch-frost').classList.add('active');
+                updateParticles('frost');
+            } else if (theme === 'blood') {
+                root.style.setProperty('--primary-color', '#c23b22');
+                root.style.setProperty('--secondary-color', '#a02f1a');
+                root.style.setProperty('--accent-color', '#e74c3c');
+                root.style.setProperty('--dark-bg', '#1a0a08');
+                root.style.setProperty('--card-bg', '#2a1a18');
+                document.querySelector('.swatch-blood').classList.add('active');
+                updateParticles('blood');
+            }
+        }
+
+        // Form Submit Handler
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            const successMessage = document.getElementById('successMessage');
+            const emailInput = document.getElementById('email');
+            
+            // Validate email contains @
+            if (!emailInput.value.includes('@')) {
+                emailInput.focus();
+                emailInput.setCustomValidity('Email must contain @ symbol');
+                emailInput.reportValidity();
+                return;
+            } else {
+                emailInput.setCustomValidity('');
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            
+            // Simulate sending (in real app, this would be an API call)
+            setTimeout(() => {
+                // Hide form
+                form.style.display = 'none';
+                
+                // Show success message
+                successMessage.classList.add('show');
+                
+                // Reset form
+                form.reset();
+                
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                
+                // Hide success message and show form again after 5 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                    form.style.display = 'block';
+                }, 5000);
+            }, 1500);
+        }
+
+        // Particle System
+        let currentTheme = 'gold';
+        
+        function createParticles() {
+            const container = document.getElementById('particles');
+            container.innerHTML = '';
+            
+            const particleCount = window.innerWidth < 768 ? 20 : 40;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 4 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                updateParticleColor(particle, currentTheme);
+                
+                container.appendChild(particle);
+            }
+        }
+
+        function updateParticleColor(particle, theme) {
+            if (theme === 'gold') {
+                particle.style.background = `rgba(${201 + Math.random() * 30}, ${170 + Math.random() * 30}, ${113 + Math.random() * 30}, 0.6)`;
+            } else if (theme === 'frost') {
+                particle.style.background = `rgba(${74 + Math.random() * 50}, ${144 + Math.random() * 50}, ${226 + Math.random() * 29}, 0.6)`;
+            } else if (theme === 'blood') {
+                particle.style.background = `rgba(${194 + Math.random() * 50}, ${59 + Math.random() * 30}, ${34 + Math.random() * 30}, 0.6)`;
+            }
+        }
+
+        function updateParticles(theme) {
+            currentTheme = theme;
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach(particle => updateParticleColor(particle, theme));
+        }
+
+        // Navbar Scroll Handler
+        let lastScroll = 0;
+        const navbar = document.querySelector('.navbar');
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                navbar.classList.add('visible');
+            } else {
+                navbar.classList.remove('visible');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Smooth Scroll for Navigation Links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Hamburger Menu Toggle
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            const hamburger = document.querySelector('.hamburger');
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            const navMenu = document.getElementById('navMenu');
+            const hamburger = document.querySelector('.hamburger');
+            navMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+
+        // Parallax Effect (disabled on mobile for better performance)
+        if (window.innerWidth > 768) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('.hero');
+                if (hero) {
+                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+        }
+
+        // Easter Egg: Konami Code
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    activateEasterEgg();
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        function activateEasterEgg() {
+            const hero = document.querySelector('.hero h1');
+            const originalText = hero.textContent;
+            hero.textContent = '⚔️ SPARTAN RAGE ACTIVATED ⚔️';
+            hero.style.color = '#e74c3c';
+            hero.style.textShadow = '0 0 20px #e74c3c, 0 0 40px #c23b22';
+            
+            // Flash effect
+            document.body.style.animation = 'flash 0.5s ease 3';
+            
+            setTimeout(() => {
+                hero.textContent = originalText;
+                hero.style.color = '';
+                hero.style.textShadow = '';
+                document.body.style.animation = '';
+            }, 3000);
+        }
+
+        // Add flash animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes flash {
+                0%, 100% { background-color: var(--dark-bg); }
+                50% { background-color: rgba(231, 76, 60, 0.2); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize
+        window.addEventListener('load', () => {
+            createParticles();
+        });
+
+        // Recreate particles on resize
+        window.addEventListener('resize', () => {
+            createParticles();
+        });
+
+        // Character Bio Expansion
+        function toggleCharacterBio(card, event) {
+            // Don't expand if clicking the close button
+            if (event && event.target.classList.contains('close-bio-btn')) {
+                return;
+            }
+            
+            const overlay = document.getElementById('characterOverlay');
+            const allCards = document.querySelectorAll('.character-card');
+            
+            // Close all other cards
+            allCards.forEach(c => {
+                if (c !== card) {
+                    c.classList.remove('expanded');
+                }
+            });
+            
+            // Toggle the clicked card
+            if (card.classList.contains('expanded')) {
+                card.classList.remove('expanded');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            } else {
+                card.classList.add('expanded');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                // Scroll to top of the expanded card
+                setTimeout(() => {
+                    card.scrollTop = 0;
+                }, 100);
+            }
+        }
+
+        function closeCharacterBio(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            const overlay = document.getElementById('characterOverlay');
+            const allCards = document.querySelectorAll('.character-card');
+            
+            allCards.forEach(card => {
+                card.classList.remove('expanded');
+            });
+            
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeCharacterBio();
+            }
+        });
+    </script>
+</body>
+</html>
