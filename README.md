@@ -19,7 +19,3 @@ Tech Stack
 HTML5
 CSS3
 JavaScript (Vanilla)
-
-Notes
-
-This project reflects my approach to modern development workflows where AI is used as a productivity tool, not a replacement for understanding.
