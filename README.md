@@ -20,12 +20,6 @@ HTML5
 CSS3
 JavaScript (Vanilla)
 
-What I Learned
-
-Using AI-assisted tools to iterate faster on front-end layouts
-Reviewing, modifying, and refining generated code
-Improving CSS responsiveness and structure
-
 Notes
 
 This project reflects my approach to modern development workflows where AI is used as a productivity tool, not a replacement for understanding.
